@@ -1,0 +1,8 @@
+fastapi
+requests
+asyncio
+uvicorn[standard]
+jinja2
+pydantic
+requests[socks]
+pytest
