@@ -4,5 +4,6 @@ asyncio
 uvicorn[standard]
 jinja2
 pydantic
+pydantic[email]
 requests[socks]
 pytest
