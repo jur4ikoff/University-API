@@ -8,3 +8,7 @@ pydantic[email]
 requests[socks]
 pytest
 json_db_lite
+sqlalchemy
+alembic
+asyncpg
+pydantic-settings
