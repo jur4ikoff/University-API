@@ -7,3 +7,4 @@ pydantic
 pydantic[email]
 requests[socks]
 pytest
+json_db_lite

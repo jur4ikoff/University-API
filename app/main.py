@@ -1,10 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.responses import Response, JSONResponse
 import os
 from typing import Optional
 
-from utils import json_to_dict_list
-from models import Student
+from utils import json_to_dict_list, add_student, upd_student, dell_student
+from models import Student, RBStudent, SUpdateFilter, StudentUpdate, SDeleteFilter
 
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -21,34 +21,64 @@ def root():
 
 @app.get("/students")
 def get_all_students():
-    students = json_to_dict_list(path_to_json)
+    students = json_to_dict_list()
     return JSONResponse(students)
 
 
 @app.get("/students/{course}")
-def get_all_students_course(course: int, major: Optional[str] = None, enrollment_year: Optional[int] = 2018) -> list[Student]:
-    students = json_to_dict_list(path_to_json)
+def get_all_students_course(request_body: RBStudent = Depends()) -> list[Student]:
+    students = json_to_dict_list()
 
     filtered_students = []
+
     for student in students:
-        if student["course"] == course:
+        if student["course"] == request_body.course:
             filtered_students.append(student)
 
-    if major:
-        filtered_students = [
-            student for student in filtered_students if student["major"].lower() == major.lower()]
+    if request_body.major:
+        filtered_students = [student for student in filtered_students if student["major"].lower(
+        ) == request_body.major.lower()]
 
-    if enrollment_year:
+    if request_body.enrollment_year:
         filtered_students = [
-            student for student in filtered_students if student["enrollment_year"] == enrollment_year]
+            student for student in filtered_students if student["enrollment_year"] == request_body.enrollment_year]
 
     return filtered_students
 
 
 @app.get("/student", response_model=Student)
 def get_student_by_id(student_id: int):
-    students = json_to_dict_list(path_to_json)
+    students = json_to_dict_list()
     for student in students:
         if student["student_id"] == student_id:
             return student
-        
+
+
+@app.post("/add_student")
+def add_student_handler(student: Student):
+    student_dict = student.dict()
+    check = add_student(student_dict)
+
+    if check:
+        return JSONResponse({"message": "Студент успешно добавлен"})
+    else:
+        return JSONResponse({"message": "Ошибка про добавлении студента"})
+
+
+@app.put("/update_student")
+def update_student_handler(filter_sudent: SUpdateFilter, new_data: StudentUpdate):
+    check = upd_student(filter_sudent.dict(), new_data.dict())
+
+    if check:
+        return JSONResponse({"message" : "Информация успешно обновлена!"})
+    else:
+        raise HTTPException(status_code=4000, detail="Ошика при обновлении информации о студенте")
+    
+@app.delete("/delete_student")
+def delete_student_handler(filter_student: SDeleteFilter):
+    check = dell_student(filter_student.key, filter_student.value)
+
+    if check:
+        return JSONResponse({"message" : "Студент успешно удален"} )
+    else:
+        raise HTTPException(status_code=400, detail="Ошибка при удалении")
