@@ -3,8 +3,8 @@ from fastapi.responses import Response, JSONResponse
 import os
 from typing import Optional
 from sqlalchemy import select
-from app.database import async_sesion_maker
-from app.students.models import Student
+from app.students.router import router as router_students
+
 # from app.students.models import  Student, RBStudent, SUpdateFilter, StudentUpdate, SDeleteFilter
 
 
@@ -15,18 +15,18 @@ parent_dir = os.path.dirname(script_dir)
 path_to_json = os.path.join(parent_dir, "students.json")
 
 app = FastAPI()
-
+app.include_router(router_students)
 
 @app.get("/")
 def root():
     return JSONResponse({"message": "Hello world"})
 
 
-@app.get("/students")
-def get_all_students():
-    pass
-    # students = json_to_dict_list()
-    # return JSONResponse(students)
+# @app.get("/students")
+# def get_all_students():
+#     pass
+#     # students = json_to_dict_list()
+#     # return JSONResponse(students)
 
 
 # @app.get("/students/{course}")
