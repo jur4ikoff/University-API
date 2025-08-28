@@ -21,7 +21,6 @@ app.include_router(router_students)
 def root():
     return JSONResponse({"message": "Hello world"})
 
-
 # @app.get("/students")
 # def get_all_students():
 #     pass

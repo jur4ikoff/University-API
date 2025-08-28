@@ -9,7 +9,7 @@ from app.config import get_db_url
 DATABASE_URL = get_db_url()
 
 engine = create_async_engine(DATABASE_URL)
-async_sesion_maker = async_sessionmaker(engine, expire_on_commit=False)
+async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 
 int_pk = Annotated[int, mapped_column(primary_key=True)]
@@ -31,5 +31,5 @@ class Base(AsyncAttrs, DeclarativeBase):
         """
         return f"{cls.__name__.lower()}s"
 
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at]
+    # created_at: Mapped[created_at]
+    # updated_at: Mapped[updated_at]
