@@ -14,3 +14,6 @@ asyncpg
 pydantic-settings
 greenlet
 httpx
+python-jose
+bcrypt==4.0.1
+passlib[bcrypt]
