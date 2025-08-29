@@ -1,5 +1,5 @@
 from app.dao.base import BaseDAO
 from app.majors.models import Major
 
-class MajoesDAO(BaseDAO):
+class MajorsDAO(BaseDAO):
     model = Major

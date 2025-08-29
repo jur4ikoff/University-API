@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends
 from app.students.dao import StudentDAO
 from app.students.rb import RBStudent
-from app.students.schemas import SStudent
+from app.students.schemas import SStudent, SStudentAdd
 
 router = APIRouter(prefix="/students", tags=["Работа со студентами"])
 
@@ -29,3 +29,13 @@ async def get_student_by_filter(request_body: RBStudent = Depends()) -> SStudent
         return {"message": f"Студент с указанными вами параметрами не найден!"}
 
     return res
+
+
+@router.post("/add/", summary="Добавить студента")
+async def add_student(student: SStudentAdd) -> dict:
+    check = await StudentDAO.add_student(**student.dict())
+
+    if check:
+        return {"message": "Студент успешно добавлен", "student": student}
+    else:
+        return {"message": "Ошибка при добавлении студента"}

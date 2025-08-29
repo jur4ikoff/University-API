@@ -3,7 +3,9 @@ from fastapi.responses import Response, JSONResponse
 import os
 from typing import Optional
 from sqlalchemy import select
+
 from app.students.router import router as router_students
+from app.majors.router import router as router_majors
 
 # from app.students.models import  Student, RBStudent, SUpdateFilter, StudentUpdate, SDeleteFilter
 
@@ -15,7 +17,9 @@ parent_dir = os.path.dirname(script_dir)
 path_to_json = os.path.join(parent_dir, "students.json")
 
 app = FastAPI()
+
 app.include_router(router_students)
+app.include_router(router_majors)
 
 @app.get("/")
 def root():
