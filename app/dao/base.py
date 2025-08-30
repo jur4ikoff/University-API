@@ -43,7 +43,7 @@ class BaseDAO:
                     await session.rollback()
                     raise e
                 return new_instance
-
+    
     @classmethod
     async def update(cls, filter_by, **values):
         """определяет асинхронный метод update, который принимает два параметра:

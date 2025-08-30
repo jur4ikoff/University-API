@@ -1,5 +1,6 @@
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import Response
 from app.students.dao import StudentDAO
 from app.students.rb import RBStudent
 from app.students.schemas import SStudent, SStudentAdd
@@ -47,3 +48,4 @@ async def delete_student_by_id(student_id: int) -> dict:
         return {"message": f"Студент с ID {student_id} удален!"}
     else:
         return {"message": "Ошибка при удалении студента"}
+    

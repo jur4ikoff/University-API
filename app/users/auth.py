@@ -1,7 +1,13 @@
 from passlib.context import CryptContext
-from jose import jwt
+from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
 from app.config import get_auth_data
+from app.users.dao import UsersDAO
+
+from fastapi import APIRouter, HTTPException, status, Depends, Request
+
+
+from pydantic import EmailStr
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -19,6 +25,26 @@ def create_acces_token(data: dict) -> str:
     expire = datetime.now(timezone.utc) + timedelta(days=30)
     to_encode.update({"exp": expire})
     auth_data = get_auth_data()
-    encode_jwt = jwt.encode(to_encode, auth_data["secret_key"], algorithm=auth_data["algorithm"])
+    encode_jwt = jwt.encode(
+        to_encode, auth_data["secret_key"], algorithm=auth_data["algorithm"])
 
     return encode_jwt
+
+
+async def authenticate_user(email: EmailStr, password: str):
+    user = await UsersDAO.find_one_or_none(email=email)
+
+    if not user or verify_password(plain_password=password, hashed_password=user.password) is False:
+        return None
+
+    return user
+
+
+def get_token(request: Request):
+    token = request.cookies.get("users_access_token")
+
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    return token
+
