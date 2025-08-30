@@ -1,11 +1,29 @@
 from sqlalchemy import update as sqlalchemy_update, delete as sqlalchemy_delete
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.future import select
+from sqlalchemy.orm import joinedload
 from app.database import async_session_maker
 
 
 class BaseDAO:
     model = None
+
+    @classmethod
+    async def find_students(cls, **student_data):
+        async with async_session_maker() as session:
+            query = select(cls.model).options(joinedload(cls.model.major)).filter_by(**student_data)
+            result = await session.execute(query)
+
+            student_info = result.scalars().all()
+
+            students_data = []
+
+            for student in student_info:
+                student_dict = student.to_dict()
+                student_dict["major"] = student.major.major_name if student.major else None
+                students_data.append(student_dict)
+            
+            return students_data
 
     @classmethod
     async def find_all(cls, **filter_by):
@@ -43,7 +61,7 @@ class BaseDAO:
                     await session.rollback()
                     raise e
                 return new_instance
-    
+
     @classmethod
     async def update(cls, filter_by, **values):
         """определяет асинхронный метод update, который принимает два параметра:

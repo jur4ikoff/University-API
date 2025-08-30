@@ -54,6 +54,6 @@ async def get_all_users(user_data: User = Depends(get_current_admin_user)):
 async def make_admin(id: int, user_data: User = Depends(get_current_admin_user)):
     return await UsersDAO.update(filter_by={"id": id}, is_admin=True)
 
-@router.delete("/delete/student/{id}")
-async def delete_student(id: int, user_data: User = Depends(get_current_admin_user)):
+@router.delete("/delete_admin/{id}")
+async def delete_admin(id: int, user_data: User = Depends(get_current_admin_user)):
     return await UsersDAO.update(filter_by={"id": id}, is_admin=False)
